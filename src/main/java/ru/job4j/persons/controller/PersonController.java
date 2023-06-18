@@ -33,20 +33,36 @@ public class PersonController {
 
     @PostMapping("/")
     public ResponseEntity<Person> create(@RequestBody Person person) {
-        return new ResponseEntity<>(
-                service.save(person),
-                HttpStatus.CREATED
-        );
+        var result = service.save(person);
+        if (result != null) {
+            return new ResponseEntity<>(
+                    result,
+                    HttpStatus.CREATED
+            );
+        } else {
+            return new ResponseEntity<>(
+                    person,
+                    HttpStatus.BAD_REQUEST
+            );
+        }
     }
 
     @PutMapping("/")
     public ResponseEntity<Void> update(@RequestBody Person person) {
+        var update = service.findById(person.getId());
+        if (update.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
         service.save(person);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) {
+        var delete = service.findById(id);
+        if (delete.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
         service.delete(id);
         return ResponseEntity.ok().build();
     }

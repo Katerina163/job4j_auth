@@ -8,10 +8,9 @@ import javax.persistence.*;
 @Entity
 @Table(name = "person")
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode
 public class Person {
     @Id
-    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String login;
