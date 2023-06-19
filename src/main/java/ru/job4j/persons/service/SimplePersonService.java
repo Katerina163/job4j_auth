@@ -24,7 +24,7 @@ public class SimplePersonService implements PersonService {
     }
 
     @Override
-    public Person save(Person person) {
+    public Optional<Person> save(Person person) {
         return repository.save(person);
     }
 

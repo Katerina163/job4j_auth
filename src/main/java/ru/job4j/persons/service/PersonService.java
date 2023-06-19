@@ -10,7 +10,7 @@ public interface PersonService {
 
     Optional<Person> findById(int id);
 
-    Person save(Person person);
+    Optional<Person> save(Person person);
 
     void delete(int id);
 }

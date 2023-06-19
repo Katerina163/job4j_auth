@@ -14,7 +14,7 @@ public interface PersonRepository extends CrudRepository<Person, Integer> {
     Optional<Person> findById(int id);
 
     @NonNull
-    Person save(@NonNull Person person);
+    Optional<Person> save(@NonNull Person person);
 
     Optional<Person> findByLogin(String login);
 }

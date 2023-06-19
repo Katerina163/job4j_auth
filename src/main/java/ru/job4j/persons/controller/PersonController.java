@@ -34,17 +34,13 @@ public class PersonController {
     @PostMapping("/")
     public ResponseEntity<Person> create(@RequestBody Person person) {
         var result = service.save(person);
-        if (result != null) {
-            return new ResponseEntity<>(
-                    result,
-                    HttpStatus.CREATED
-            );
-        } else {
-            return new ResponseEntity<>(
-                    person,
-                    HttpStatus.BAD_REQUEST
-            );
-        }
+        return result.map(value -> new ResponseEntity<>(
+                value,
+                HttpStatus.CREATED
+        )).orElseGet(() -> new ResponseEntity<>(
+                person,
+                HttpStatus.CONFLICT
+        ));
     }
 
     @PutMapping("/")
