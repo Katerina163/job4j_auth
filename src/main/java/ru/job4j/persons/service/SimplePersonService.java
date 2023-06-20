@@ -40,6 +40,10 @@ public class SimplePersonService implements PersonService, UserDetailsService {
 
     @Override
     public Optional<Person> save(Person person) {
+        var saved = repository.findByLogin(person.getLogin());
+        if (saved.isPresent()) {
+            return Optional.empty();
+        }
         return Optional.of(repository.save(person));
     }
 
