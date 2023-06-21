@@ -1,7 +1,6 @@
 package ru.job4j.persons.service;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +16,6 @@ import static java.util.Collections.emptyList;
 
 @Service
 @AllArgsConstructor
-@Slf4j
 public class SimplePersonService implements PersonService, UserDetailsService {
     private final PersonRepository repository;
 
@@ -42,13 +40,7 @@ public class SimplePersonService implements PersonService, UserDetailsService {
 
     @Override
     public Optional<Person> save(Person person) {
-        Optional<Person> result = Optional.empty();
-        try {
-            result = Optional.of(repository.save(person));
-        } catch (Exception e) {
-            log.error("Неверный логин", e);
-        }
-        return result;
+        return Optional.of(repository.save(person));
     }
 
     @Override
