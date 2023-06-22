@@ -12,6 +12,7 @@ import ru.job4j.persons.service.PersonService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -100,14 +101,28 @@ public class PersonController {
         return ResponseEntity.ok().build();
     }
 
-    @ExceptionHandler(value = { SQLException.class })
+    @PatchMapping("/{id}")
+    public ResponseEntity<Person> modify(@RequestBody Person person) throws InvocationTargetException, IllegalAccessException {
+        if (person.getPassword() != null) {
+            person.setPassword(encoder.encode(person.getPassword()));
+        }
+        var personOpt = service.modify(person);
+        return new ResponseEntity<>(
+                personOpt.orElse(new Person()),
+                personOpt.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(value = {SQLException.class})
     public void exceptionHandler(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         response.setContentType("application/json");
-        response.getWriter().write(objectMapper.writeValueAsString(new HashMap<>() { {
-            put("message", "Some fields are incorrect");
-            put("details", "This login already exists");
-        }}));
+        response.getWriter().write(objectMapper.writeValueAsString(new HashMap<>() {
+            {
+                put("message", "Some fields are incorrect");
+                put("details", "This login already exists");
+            }
+        }));
         log.error(e.getLocalizedMessage());
     }
 }
