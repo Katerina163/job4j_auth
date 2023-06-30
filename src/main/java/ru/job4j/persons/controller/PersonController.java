@@ -12,6 +12,8 @@ import ru.job4j.persons.service.PersonService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
@@ -33,8 +35,7 @@ public class PersonController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> signUp(@RequestBody Person person) {
-        validation(person);
+    public ResponseEntity<Void> signUp(@Valid @RequestBody Person person) {
         person.setPassword(encoder.encode(person.getPassword()));
         var register = service.save(person);
         if (register.isEmpty()) {
@@ -43,22 +44,13 @@ public class PersonController {
         return ResponseEntity.ok().build();
     }
 
-    private void validation(Person person) {
-        if (person.getLogin() == null || person.getPassword() == null) {
-            throw new NullPointerException("Username and password mustn't be empty");
-        }
-        if (person.getPassword().length() < 6) {
-            throw new IllegalArgumentException("Invalid username or password");
-        }
-    }
-
     @GetMapping("/")
     public List<Person> findAll() {
         return service.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Person> findById(@PathVariable int id) {
+    public ResponseEntity<Person> findById(@Min(value = 0) @PathVariable int id) {
         var person = service.findById(id);
         return new ResponseEntity<>(
                 person.orElse(new Person()),
@@ -67,8 +59,7 @@ public class PersonController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Person> create(@RequestBody Person person) {
-        validation(person);
+    public ResponseEntity<Person> create(@Valid @RequestBody Person person) {
         person.setPassword(encoder.encode(person.getPassword()));
         var result = service.save(person);
         return result.map(value -> new ResponseEntity<>(
@@ -81,8 +72,7 @@ public class PersonController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Person person) {
-        validation(person);
+    public ResponseEntity<Void> update(@Valid @RequestBody Person person) {
         person.setPassword(encoder.encode(person.getPassword()));
         var update = service.findById(person.getId());
         if (update.isEmpty()) {
@@ -93,7 +83,7 @@ public class PersonController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable int id) {
+    public ResponseEntity<Void> delete(@Min(value = 0) @PathVariable int id) {
         var delete = service.findById(id);
         if (delete.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -103,10 +93,9 @@ public class PersonController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Person> modify(@RequestBody PersonDto person) throws InvocationTargetException, IllegalAccessException {
-        if (person.getPassword() != null) {
-            person.setPassword(encoder.encode(person.getPassword()));
-        }
+    public ResponseEntity<Person> modify(@Valid @RequestBody PersonDto person)
+            throws InvocationTargetException, IllegalAccessException {
+        person.setPassword(encoder.encode(person.getPassword()));
         var personOpt = service.modify(person);
         return new ResponseEntity<>(
                 personOpt.orElse(new Person()),
