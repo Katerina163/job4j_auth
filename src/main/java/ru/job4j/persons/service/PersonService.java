@@ -1,5 +1,6 @@
 package ru.job4j.persons.service;
 
+import ru.job4j.persons.dto.PersonDto;
 import ru.job4j.persons.model.Person;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,5 +16,5 @@ public interface PersonService {
 
     void delete(int id);
 
-    Optional<Person> modify(Person person) throws InvocationTargetException, IllegalAccessException;
+    Optional<Person> modify(PersonDto person) throws InvocationTargetException, IllegalAccessException;
 }

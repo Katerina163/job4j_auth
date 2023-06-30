@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.persons.dto.PersonDto;
 import ru.job4j.persons.model.Person;
 import ru.job4j.persons.service.PersonService;
 
@@ -102,7 +103,7 @@ public class PersonController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Person> modify(@RequestBody Person person) throws InvocationTargetException, IllegalAccessException {
+    public ResponseEntity<Person> modify(@RequestBody PersonDto person) throws InvocationTargetException, IllegalAccessException {
         if (person.getPassword() != null) {
             person.setPassword(encoder.encode(person.getPassword()));
         }
